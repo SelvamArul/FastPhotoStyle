@@ -31,14 +31,17 @@ except:
     print("Fail to load PhotoWCT models. PhotoWCT submodule not updated?")
     exit()
 
+print ('Done loading Model')
 if args.cuda:
     p_wct.cuda(0)
+    print ('Model moved to GPU')
 
-content_path = p(args.content_image_path)
-style_path   = p(args.style_image_path)
-output_path  = p(args.output_image_path)
+content_path = P(args.content_image_path)
+style_path   = P(args.style_image_path)
+output_path  = P(args.output_image_path)
 
 for i_content in content_path.glob('*.jpg'):
+    print ('Processing ', str(i_content))
     for i_style in style_path.glob('*.jpg'):
         output_image_path = str (output_path / ( i_content.stem + '_' + i_style.stem + '.jpg' ))
         process_stylization.stylization(
