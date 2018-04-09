@@ -11,3 +11,4 @@ notebooks/.ipynb_checkpoints/*
 *.zip
 *.pkl
 *.pyc
+*.kdev4
