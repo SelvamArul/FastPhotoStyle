@@ -37,6 +37,9 @@ def stylization(p_wct, content_image_path, style_image_path, content_seg_path, s
     # Load image
     cont_img = Image.open(content_image_path).convert('RGB')
     styl_img = Image.open(style_image_path).convert('RGB')
+    
+    cont_img = transforms.Resize(900)(cont_img)
+    styl_img = transforms.Resize(900)(styl_img)
     try:
         cont_seg = Image.open(content_seg_path)
         styl_seg = Image.open(style_seg_path)
