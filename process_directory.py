@@ -22,7 +22,7 @@ parser.add_argument('--model', default='./PhotoWCTModels/photo_wct.pth',
                     help='Path to the PhotoWCT model. These are provided by the PhotoWCT submodule, please use `git submodule update --init --recursive` to pull.')
 parser.add_argument('-c','--content_image_path', default='./images/content/')
 parser.add_argument('--content_seg_path', default=[])
-parser.add_argument('-s','--style_image_path', default='./images/style/')
+parser.add_argument('-s','--style_image_path', default='./images/style_with_labels/')
 parser.add_argument('--style_seg_path', default=[])
 parser.add_argument('--output_image_path', default='./results/')
 parser.add_argument('--cuda', type=int, default=1, help='Enable CUDA.')
@@ -72,6 +72,6 @@ for i_content in content_path.glob('*.jpg'):
             output_image_path=output_image_path,
             cuda=args.cuda,
         )
-    print ('Done processing ', output_image_path)
+        print ('Done processing ', output_image_path)
 print ('All images Done')
 
