@@ -26,7 +26,8 @@ parser.add_argument('-s','--style_image_path', default='./images/style_with_labe
 parser.add_argument('--style_seg_path', default=[])
 parser.add_argument('--output_image_path', default='./results/')
 parser.add_argument('--cuda', type=int, default=1, help='Enable CUDA.')
-parser.add_argument('-glrc', 'glrc_model_path', default="/home/lperiyasa/GLRC/log/glrc_stage_2.pth.tar")
+parser.add_argument('-glrc_1', 'glrc_model_1_path', default="/home/lperiyasa/GLRC/log/cpu_glrc_stage_1.pth.tar")
+parser.add_argument('-glrc_2', 'glrc_model_2_path', default="/home/lperiyasa/GLRC/log/glrc_stage_2.pth.tar")
 args = parser.parse_args()
 
 # Load model
@@ -43,7 +44,7 @@ if args.cuda:
     print ('WCT Model moved to GPU')
 
 
-mask_extractor = mask_api.EXTRACT_ATTENTION_MASK(args.glrc_model_path)
+mask_extractor = mask_api.EXTRACT_ATTENTION_MASK(args.glrc_model_1_path, args.glrc_model_2_path)
 
 content_path = P(args.content_image_path)
 style_path   = P(args.style_image_path)
