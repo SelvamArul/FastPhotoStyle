@@ -1,6 +1,7 @@
 """
-Copyright (C) 2018 NVIDIA Corporation.  All rights reserved.
-Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+Applies style transfer to all the images in the directory.
+uses the attention mask from the GLRC model.
+NOTE: Needs "GLRC/python/" directory added to PYTHONPATH
 """
 
 from __future__ import print_function
@@ -12,6 +13,10 @@ import torch
 import process_stylization
 from photo_wct import PhotoWCT
 
+import attention_mask_api as mask_api
+
+from PIL import Image
+
 parser = argparse.ArgumentParser(description='Photorealistic Image Stylization')
 parser.add_argument('--model', default='./PhotoWCTModels/photo_wct.pth',
                     help='Path to the PhotoWCT model. These are provided by the PhotoWCT submodule, please use `git submodule update --init --recursive` to pull.')
@@ -21,6 +26,7 @@ parser.add_argument('-s','--style_image_path', default='./images/style/')
 parser.add_argument('--style_seg_path', default=[])
 parser.add_argument('--output_image_path', default='./results/')
 parser.add_argument('--cuda', type=int, default=1, help='Enable CUDA.')
+parser.add_argument('-glrc', 'glrc_model_path', default="/home/lperiyasa/GLRC/log/glrc_stage_2.pth.tar")
 args = parser.parse_args()
 
 # Load model
@@ -34,7 +40,10 @@ except:
 print ('Done loading Model')
 if args.cuda:
     p_wct.cuda(0)
-    print ('Model moved to GPU')
+    print ('WCT Model moved to GPU')
+
+
+mask_extractor = mask_api.EXTRACT_ATTENTION_MASK(args.glrc_model_path)
 
 content_path = P(args.content_image_path)
 style_path   = P(args.style_image_path)
@@ -44,12 +53,22 @@ for i_content in content_path.glob('*.jpg'):
     print ('Processing ', str(i_content))
     for i_style in style_path.glob('*.jpg'):
         output_image_path = str (output_path / ( i_content.stem + '_' + i_style.stem + '.jpg' ))
+
+        # extract and save the attention mask as label
+        content_image =  Image.open(i_content)
+        content_label = mask_extractor.extract(content_image)
+        content_seg_path = str(i_content.parent / ( i_content.stem + '_' + 'label.png' ))
+        content_label.save( content_seg_path )
+
+        # constuct style_seg_path
+        style_seg_path = str( i_style.parent / i_style.stem / 'label.png' )
+
         process_stylization.stylization(
             p_wct=p_wct,
             content_image_path=str(i_content),
             style_image_path=str(i_style),
-            content_seg_path=args.content_seg_path,
-            style_seg_path=args.style_seg_path,
+            content_seg_path=content_seg_path,
+            style_seg_path=style_seg_path,
             output_image_path=output_image_path,
             cuda=args.cuda,
         )
