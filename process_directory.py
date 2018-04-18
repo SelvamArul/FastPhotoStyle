@@ -62,7 +62,7 @@ for i_content in content_path.glob('*.jpg'):
         content_label.save( content_seg_path )
 
         # constuct style_seg_path
-        style_seg_path = str( i_style.parent / i_style.stem / 'label.png' )
+        style_seg_path = str( i_style.parent / ( i_style.stem + '_' + 'label.png' ) )
 
         process_stylization.stylization(
             p_wct=p_wct,
