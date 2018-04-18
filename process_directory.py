@@ -59,6 +59,7 @@ for i_content in content_path.glob('*.jpg'):
         content_image =  Image.open(i_content)
         content_label = mask_extractor.extract(content_image)
         content_seg_path = str(i_content.parent / ( i_content.stem + '_' + 'label.png' ))
+        content_label = Image.fromarray( content_label.astype('uint8'))
         content_label.save( content_seg_path )
 
         # constuct style_seg_path
